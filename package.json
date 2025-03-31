@@ -1,0 +1,29 @@
+{
+  "name": "term-project-it-can-t-get-more-broken",
+  "version": "1.0.0",
+  "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/mxK4dQXB) # **Term Project**",
+  "homepage": "https://github.com/GVSU-CIS371/term-project-it-can-t-get-more-broken#readme",
+  "bugs": {
+    "url": "https://github.com/GVSU-CIS371/term-project-it-can-t-get-more-broken/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GVSU-CIS371/term-project-it-can-t-get-more-broken.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "vite": "^6.2.4",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vue/compiler-sfc": "^3.5.13"
+  }
+}
