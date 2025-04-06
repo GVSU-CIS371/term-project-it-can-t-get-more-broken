@@ -1,11 +1,17 @@
+
 <template>
-  <head>
-    <p>hello</p>
-  </head>
+  <div id="app" class="my-app">
+    <TaskList />
+  </div>
 </template>
 
+
+
 <script setup lang="ts">
+import TaskList from './components/TaskList.vue';
 </script>
+
+
 
 <style lang="scss">
 body,
@@ -20,5 +26,12 @@ html {
 }
 ul {
   list-style: none;
+}
+div {
+  /* Styles for all divs, or you can narrow it further */
+  background-color: #000000;
+  padding: 20px;
+  border: 2px solid #000000;
+  margin: 20px
 }
 </style>
