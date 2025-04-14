@@ -7,7 +7,7 @@
     name: 'App',
     components: {
         HeaderComponent,
-        TaskList,
+      //   TaskList,
         TaskDisplay,
     },
    };
@@ -16,15 +16,9 @@
 
 <template>
    <div id="app">
-      <div class="body-template">
-         <div class="body-upper">
-            <HeaderComponent/>
-         </div>
-         <div class="body-lower">
-            <TaskList/>
-            <TaskDisplay/>
-         </div>
-      </div>
+      <HeaderComponent/>
+      <TaskList/>
+      <TaskDisplay/>
    </div>
 </template>
 

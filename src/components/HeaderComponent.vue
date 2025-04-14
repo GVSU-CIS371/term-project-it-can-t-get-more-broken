@@ -1,10 +1,11 @@
 <template>
    <header>
-      <link rel="stylesheet" href="./assets/headerComponents.css">
-      <h1>Header Component</h1>
-      <p>This is a reusable header component.</p>
+      <h1>Hello, User</h1>
+      <div class="user-buttons">
+         <button>Settings</button>
+         <button>Profile</button>
+      </div>
    </header>
 </template>
 
-<script>
-</script>
+<style src="../assets/headerComponent.css"></style>
