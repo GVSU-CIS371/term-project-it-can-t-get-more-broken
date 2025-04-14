@@ -1,9 +1,12 @@
 <template>
    <header>
-      <h1>Hello, User</h1>
+      <div class="layout">
+         <h1>Hello, User</h1>
+         <button class="toggle-tasks">Toggle Tasks</button>
+      </div>
       <div class="user-buttons">
-         <button>Settings</button>
-         <button>Profile</button>
+         <button class="u-button">Settings</button>
+         <button class="u-button">Profile</button>
       </div>
    </header>
 </template>

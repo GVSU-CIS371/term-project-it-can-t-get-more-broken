@@ -1,10 +1,5 @@
 <template>
   <div class="TaskList">
-    <h2>Task List</h2>
-    <p>.</p>
-    <p>.</p>
-    <p>.</p>
-    <p>.</p>
   </div>
 </template>
 
@@ -13,15 +8,12 @@
 
 <style lang="scss">
 .TaskList {
-  position: fixed;
-  left: 0;
-  width: 30%;
-  height: 100%;
-  background-color: #ffffff;
-  padding: 00px;
+  width: auto;
+  height: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: linear-gradient(to right, #ffc78f, white);
   box-shadow: 10px 0 5px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
-  bottom: 0;
 }
 h2 {
   margin-top: 0;

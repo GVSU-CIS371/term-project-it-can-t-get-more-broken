@@ -6,9 +6,9 @@
    export default {
     name: 'App',
     components: {
-        HeaderComponent,
-      //   TaskList,
-        TaskDisplay,
+      HeaderComponent,
+      TaskList,
+      TaskDisplay,
     },
    };
 
@@ -16,9 +16,14 @@
 
 <template>
    <div id="app">
-      <HeaderComponent/>
-      <TaskList/>
-      <TaskDisplay/>
+      <div class="header-container">  <!-- header component -->
+         <HeaderComponent/>
+      </div>
+      <div class="body-container"> <!-- body component -->
+         <TaskList/>
+         <div class="divider"/>
+         <TaskDisplay/>    
+      </div>
    </div>
 </template>
 
