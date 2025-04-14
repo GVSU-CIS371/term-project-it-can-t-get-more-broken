@@ -16,12 +16,11 @@
   position: fixed;
   left: 0;
   width: 30%;
-  height: 70%;
+  height: 100%;
   background-color: #ffffff;
   padding: 00px;
   box-shadow: 10px 0 5px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
-  border-radius: 15px;
   bottom: 0;
 }
 h2 {

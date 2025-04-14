@@ -3,11 +3,9 @@ html, body {
    padding: 0;
    height: 100%;
 }
- 
-.body-lower {
-   border: 1px solid-black;
-   display: grid;
-   grid-template: 15 85;
+
+.body-template {
+   background-color: black;
 }
 
 #app {

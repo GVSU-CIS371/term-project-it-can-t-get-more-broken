@@ -1,10 +1,4 @@
-main {
+header {
+   width: 100%;
    background-color: black;
 }
-
-button {
-   color: yellowgreen;
-   border-radius: 5px;
-   size: 10px
-}
-
