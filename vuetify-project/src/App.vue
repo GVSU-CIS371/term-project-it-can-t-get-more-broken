@@ -50,9 +50,11 @@
           <template v-slot:prepend>
             <!-- <v-icon :icon="item.icon"></v-icon> -->
             <v-checkbox-btn
-              v-if="visibleCheckBox"></v-checkbox-btn>
-          </template>
+              v-if="visibleCheckBox">
+            </v-checkbox-btn>
 
+          </template>
+          <v-divider></v-divider>
           <v-list-item-title v-text="item.text"></v-list-item-title>
         </v-list-item>
       </v-list>
