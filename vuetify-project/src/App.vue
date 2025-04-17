@@ -69,15 +69,42 @@
       <span>Main Area</span>
     </v-main>
 
-    <!-- add task dialogue -->
+    <!-- Button Components -->
     <div>
       <v-dialog
         v-model="addTaskDialogue"
         width="1000">
         <v-card
           prepend-icon="mdi-calendar-check"
-          title="Add a New Task"
-        ></v-card>
+          title="Add a New Task" 
+        >
+        <v-divider style="margin: 10px"></v-divider>
+
+        <v-text-field
+         label="Title" 
+         variant="outlined" 
+         style="margin-left: 10px; margin-top: 10px; margin-right: 40%;"
+        ></v-text-field>
+
+        <div style="">
+          <v-btn @click="dateSelectDialogue = !dateSelectDialogue" style="background-color: #0091EA; margin: 10px">
+            Select End Date
+          </v-btn>
+        </div>
+
+        <v-textarea
+         label="Description" 
+         variant="outlined" 
+         style="margin-left: 10px; margin-right: 10px; height: 40%"
+         >
+         </v-textarea>
+
+        <v-row justify="space-between" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
+          <v-btn @click="addTaskDialogue = !addTaskDialogue" style="background-color: #0091EA">Cancel</v-btn>
+          <v-btn style="background-color: #0091EA">Add Task</v-btn>
+        </v-row>
+
+        </v-card>
       </v-dialog>
     </div>
 
@@ -89,6 +116,7 @@ import { ref } from 'vue';
 const taskDrawer = ref(false);
 const visibleCheckBox = ref(false);
 const addTaskDialogue = ref(false);
+const dateSelectDialogue = ref(false);
 
 const items = [
   { text: 'Task1', description: 'mdi-clock' },
