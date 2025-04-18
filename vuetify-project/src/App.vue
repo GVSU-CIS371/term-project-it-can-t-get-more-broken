@@ -70,9 +70,11 @@
             <v-checkbox-btn
               v-if="visibleCheckBox">
             </v-checkbox-btn>
+
           </template>
           <v-list-item-title v-text="item.title"></v-list-item-title>
           <v-divider></v-divider>
+
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
