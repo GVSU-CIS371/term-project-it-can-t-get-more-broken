@@ -2,7 +2,7 @@
   <v-app>
     <!-- make the name dynamic to the user -->
     <!-- Add color inverter -->
-    <v-app-bar :color="colorTheme"> 
+    <v-app-bar :color="taskStore.colorTheme"> 
       <v-app-bar-nav-icon @click.stop="taskDrawer = !taskDrawer"></v-app-bar-nav-icon>
       <v-app-bar-title>Hello, Ethan </v-app-bar-title> <v-spacer></v-spacer>
 
@@ -60,8 +60,8 @@
       <v-btn @click.stop="visibleCheckBox = !visibleCheckBox" :color="colorTheme" style="margin-left: 5%; margin-top: 5%" >Select Tasks</v-btn>
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
+          v-for="item in taskStore.items"
+          :key="item.tId"
           :value="item"
           color="primary"
           >
@@ -71,7 +71,7 @@
               v-if="visibleCheckBox">
             </v-checkbox-btn>
           </template>
-          <v-list-item-title v-text="item.text"></v-list-item-title>
+          <v-list-item-title v-text="item.title"></v-list-item-title>
           <v-divider></v-divider>
         </v-list-item>
       </v-list>
@@ -163,14 +163,14 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
+import { useTaskStore } from "./stores/tasks";
+
+const taskStore = useTaskStore();
 
 const taskDrawer = ref(false);
 const visibleCheckBox = ref(false);
 const addTaskDialogue = ref(false);
 const dateSelectDialogue = ref(false);
-const darkMode = ref(false);
-const colorTheme = "#0091EA";
-const completed = 0;
 
 const colorThemes = [ 
   {name: "Red", vid: "#E53935"},
@@ -181,25 +181,13 @@ const colorThemes = [
   {name: "Green", vid: "#64DD17"}
 ]
 
-const items = [
-  { text: 'Task1', description: 'mdi-clock' },
-  { text: 'Task2', icon: 'mdi-clock' },
-  { text: 'Task3', icon: 'mdi-clock' },
-  { text: 'Task4', icon: 'mdi-clock' },
-  { text: 'Task5', icon: 'mdi-clock' },
-  { text: 'Task6', icon: 'mdi-clock' },
-  { text: 'Task7', icon: 'mdi-clock' },
-  { text: 'Task8', icon: 'mdi-clock' },
-  { text: 'Task9', icon: 'mdi-clock' },
-  { text: 'Task10', icon: 'mdi-clock' },
-]
-
 const totalProgress = computed(() => {
-  return (this.completed / this.items.length)
+  return (taskStore.completed / taskStore.items.length)
 })
 
 function newColorTheme(newColor) {
   this.colorTheme = newColor;
+  taskStore.colorTheme = newColor;
 };
 
 
