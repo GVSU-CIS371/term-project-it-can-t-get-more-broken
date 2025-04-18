@@ -1,14 +1,17 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 
-const colorThemes = [
-    {name: "Red", vid: "#E53935"},
-    {name: "Blue", vid: "#0091EA"},
-    {name: "Pink", vid: "#D81B60"},
-    {name: "Purple", vid: "#8E24AA"},
-    {name: "Teal", vid: "#26A69A"},
-    {name: "Green", vid: "#64DD17"}
-]
+const items = [
+    { text: 'Task1', description: 'mdi-clock' },
+    { text: 'Task2', icon: 'mdi-clock' },
+    { text: 'Task3', icon: 'mdi-clock' },
+    { text: 'Task4', icon: 'mdi-clock' },
+    { text: 'Task5', icon: 'mdi-clock' },
+    { text: 'Task6', icon: 'mdi-clock' },
+    { text: 'Task7', icon: 'mdi-clock' },
+    { text: 'Task8', icon: 'mdi-clock' },
+    { text: 'Task9', icon: 'mdi-clock' },
+    { text: 'Task10', icon: 'mdi-clock' },
+  ]
 
 interface Task {
     tId: string;
@@ -24,11 +27,17 @@ interface tStore {
     items: Task[];
 }
 
-export const tasks = defineStore("TaskStore", {
+export const useTaskStore = defineStore("TaskStore", {
     state: (): tStore => ({
         colorTheme: "#0091EA",
         completed: 0,
-        items:  new Array<Task>
+        items:  [{
+            tId: "t0",
+            uId: "u0",
+            title: "Task 1",
+            description: "This is a test task.\n Beep Boop!",
+            date: new Date
+        }]
     }),
     actions: {
 
