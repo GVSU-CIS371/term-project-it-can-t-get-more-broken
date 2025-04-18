@@ -6,6 +6,12 @@
       <v-app-bar-nav-icon @click.stop="taskDrawer = !taskDrawer"></v-app-bar-nav-icon>
       <v-app-bar-title>Hello, Ethan </v-app-bar-title> <v-spacer></v-spacer>
 
+      <v-switch 
+        v-model-="darkMode" 
+        :label="'Dark Mode'"
+        style="margin-top: 20px; margin-right:20px"
+        @click="darkMode = !darkMode">
+      </v-switch>
 
       <!-- Settings Button -->
       <v-btn prepend-icon="mdi-cog-box" color="black"> 
@@ -72,7 +78,11 @@
     </v-navigation-drawer>
 
     <!-- Main Content Display Area -->
-    <v-main class="d-flex align-center justify-center" style="background-color: white">
+    <v-main
+     class="d-flex align-center justify-center"
+     v-model="darkMode"
+     :style="{backgroundColor: darkMode ? '#424242' : '#FFFFFF' }"
+    >
 
       <!-- Progress Chart -->
       <v-progress-circular
@@ -179,6 +189,7 @@ function newColorTheme(newColor) {
   this.colorTheme = newColor;
   taskStore.colorTheme = newColor;
 };
+
 
 </script>
 
