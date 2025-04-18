@@ -7,10 +7,10 @@
       <v-app-bar-title>Hello, Ethan </v-app-bar-title> <v-spacer></v-spacer>
 
       <v-switch 
-        v-model-="darkMode" 
+        v-model-="taskStore.darkMode" 
         :label="'Dark Mode'"
         style="margin-top: 20px; margin-right:20px"
-        @click="darkMode = !darkMode">
+        @click="taskStore.darkMode = !taskStore.darkMode">
       </v-switch>
 
       <!-- Settings Button -->
@@ -81,7 +81,7 @@
     <v-main
      class="d-flex align-center justify-center"
      v-model="darkMode"
-     :style="{backgroundColor: darkMode ? '#424242' : '#FFFFFF' }"
+     :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF' }"
     >
 
       <!-- Progress Chart -->
