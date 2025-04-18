@@ -72,13 +72,33 @@
     </v-navigation-drawer>
 
     <!-- Main Content Display Area -->
-    <v-main
-      style="height: 100%;
-      text-align: center;
-      align-content: center;
-      background-color: white;
-      color: black;">
-      <span>Main Area</span>
+    <v-main class="d-flex align-center justify-center" style="background-color: white">
+
+      <!-- Progress Chart -->
+      <v-progress-circular
+        :color="colorTheme"
+        :size="512"
+        :width="72"
+        :rotate="360"
+        justify="center"
+        style="font-size: 36px;"
+        model-value="totalProgress"
+      >
+        <span>{{ totalProgress }} %</span>
+      </v-progress-circular>
+      <!-- <v-sparkline
+      :auto-line-width="autoLineWidth"
+      :fill="fill"
+      :gradient="gradient"
+      :gradient-direction="gradientDirection"
+      :line-width="width"
+      :model-value="totalProgress"
+      :padding="padding"
+      :smooth="radius || false"
+      :stroke-linecap="lineCap"
+      :type="type"
+      auto-draw></v-sparkline> -->
+
     </v-main>
 
     <!-- Add Task Button Dialogue Window -->
@@ -92,12 +112,14 @@
         >
         <v-divider style="margin: 10px"></v-divider>
 
+        <!-- Title -->
         <v-text-field
          label="Title" 
          variant="outlined" 
          style="margin-left: 10px; margin-top: 10px; margin-right: 40%;"
         ></v-text-field>
 
+        <!-- Select Date -->
         <div>
           <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="colorTheme" style="margin: 10px">
             Select End Date
@@ -108,6 +130,7 @@
           <v-date-picker :color="colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
         </v-dialog>
 
+        <!-- Description -->
         <v-textarea
          label="Description" 
          variant="outlined" 
@@ -115,6 +138,7 @@
          >
          </v-textarea>
 
+        <!-- Action Buttons -->
         <v-row justify="space-between" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
           <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="colorTheme">Cancel</v-btn>
           <v-btn :color="colorTheme">Add Task</v-btn>
@@ -128,13 +152,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const taskDrawer = ref(false);
 const visibleCheckBox = ref(false);
 const addTaskDialogue = ref(false);
 const dateSelectDialogue = ref(false);
 const colorTheme = "#0091EA";
+const completed = 0;
 
 const colorThemes = [ 
   {name: "Red", vid: "#E53935"},
@@ -142,7 +167,7 @@ const colorThemes = [
   {name: "Pink", vid: "#D81B60"},
   {name: "Purple", vid: "#8E24AA"},
   {name: "Teal", vid: "#26A69A"},
-  {name: "Cyan", vid: "#00E5FF"}
+  {name: "Green", vid: "#64DD17"}
 ]
 
 const items = [
@@ -157,6 +182,10 @@ const items = [
   { text: 'Task9', icon: 'mdi-clock' },
   { text: 'Task10', icon: 'mdi-clock' },
 ]
+
+const totalProgress = computed(() => {
+  return (this.completed / this.items.length)
+})
 
 function newColorTheme(newColor) {
   this.colorTheme = newColor;
