@@ -172,7 +172,7 @@ const colorThemes = [
 ]
 
 const totalProgress = computed(() => {
-  return (this.completed / this.items.length)
+  return (taskStore.completed / taskStore.items.length)
 })
 
 function newColorTheme(newColor) {
