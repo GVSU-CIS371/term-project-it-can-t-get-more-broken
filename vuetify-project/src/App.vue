@@ -7,10 +7,10 @@
       <v-app-bar-title>Hello, Ethan </v-app-bar-title> <v-spacer></v-spacer>
 
       <v-switch 
-        v-model-="darkMode" 
+        v-model="taskStore.darkMode" 
         :label="'Dark Mode'"
         style="margin-top: 20px; margin-right:20px"
-        @click="darkMode = !darkMode">
+        @click="taskStore.darkMode = !taskStore.darkMode">
       </v-switch>
 
       <!-- Settings Button -->
@@ -52,12 +52,12 @@
       width="400">
 
       <!-- Add Tasks Button -->
-      <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="colorTheme" justify="center" style="margin-left: 65px; margin-top: 5%"  >
+      <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 65px; margin-top: 5%"  >
         Add Task
       </v-btn>
 
       <!-- Select Tasks Button -->
-      <v-btn @click.stop="visibleCheckBox = !visibleCheckBox" :color="colorTheme" style="margin-left: 5%; margin-top: 5%" >Select Tasks</v-btn>
+      <v-btn @click.stop="visibleCheckBox = !visibleCheckBox" :color="taskStore.colorTheme" style="margin-left: 5%; margin-top: 5%" >Select Tasks</v-btn>
       <v-list>
         <v-list-item
           v-for="item in taskStore.items"
@@ -80,13 +80,13 @@
     <!-- Main Content Display Area -->
     <v-main
      class="d-flex align-center justify-center"
-     v-model="darkMode"
-     :style="{backgroundColor: darkMode ? '#424242' : '#FFFFFF' }"
+     v-model="taskStore.darkMode"
+     :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF' }"
     >
 
       <!-- Progress Chart -->
       <v-progress-circular
-        :color="colorTheme"
+        :color="taskStore.colorTheme"
         :size="512"
         :width="72"
         :rotate="360"
@@ -131,13 +131,15 @@
 
         <!-- Select Date -->
         <div>
-          <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="colorTheme" style="margin: 10px">
+          <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="taskStore.colorTheme" style="margin: 10px">
             Select End Date
           </v-btn>
+          <!-- FIXME: attach it to something else -->
           <v-text-feild variant="outlined">{{ endDate }}</v-text-feild>
         </div>
         <v-dialog v-model="dateSelectDialogue" width="auto">
-          <v-date-picker :color="colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
+          <!-- FIXME: attach it to something else -->
+          <v-date-picker :color="taskStore.colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
         </v-dialog>
 
         <!-- Description -->
@@ -150,8 +152,8 @@
 
         <!-- Action Buttons -->
         <v-row justify="space-between" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
-          <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="colorTheme">Cancel</v-btn>
-          <v-btn :color="colorTheme">Add Task</v-btn>
+          <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme">Cancel</v-btn>
+          <v-btn :color="taskStore.colorTheme">Add Task</v-btn>
         </v-row>
 
         </v-card>
@@ -164,8 +166,10 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 import { useTaskStore } from "./stores/tasks";
+import { createUser } from "./stores/user";
 
 const taskStore = useTaskStore();
+const user = createUser();
 
 const taskDrawer = ref(false);
 const visibleCheckBox = ref(false);
