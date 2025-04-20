@@ -2,13 +2,13 @@ import { defineStore } from "pinia";
 
 interface User {
    username: string;
-   uid: string;
+   id: string;
 }
 
 export const createUser = defineStore("currentUser", {
    state: (): User => ({
       username: "User",
-      uid: null
+      id: null
    }),
    actions: {
 

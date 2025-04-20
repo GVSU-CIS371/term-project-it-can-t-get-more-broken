@@ -1,70 +1,106 @@
 <template>
   <v-app>
-    <!-- make the name dynamic to the user -->
-    <!-- Add color inverter -->
-    <v-app-bar :color="taskStore.colorTheme"> 
-      <v-app-bar-nav-icon @click.stop="taskDrawer = !taskDrawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>Hello, Ethan </v-app-bar-title> <v-spacer></v-spacer>
+    <v-main>
+      <div v-if="!user">
+        <h2>Please sign in</h2>
+        <div id="firebaseui-auth-container"></div>
+      </div>
 
-      <v-switch 
-        v-model="taskStore.darkMode" 
-        :label="'Dark Mode'"
-        style="margin-top: 20px; margin-right:20px"
-        @click="taskStore.darkMode = !taskStore.darkMode">
-      </v-switch>
+      <div v-else>
+        <!-- Add color inverter -->
+        <v-app-bar :color="taskStore.colorTheme"> 
+          <v-app-bar-nav-icon @click.stop="taskDrawer = !taskDrawer"></v-app-bar-nav-icon>
+          <v-app-bar-title :style="{ color: taskStore.darkMode ? 'black' : 'white' }">Hello, {{ user.displayName || user.email }}</v-app-bar-title>
+            <v-switch 
+            v-model="taskStore.darkMode" 
+            :label="'Dark Mode' "
+            :color="taskStore.darkMode ? 'black' : 'white'"
+            :label-color="taskStore.darkMode ? 'white' : 'black'"
+            style="margin-top: 20px; margin-right:20px">
+          </v-switch>
 
-      <!-- Settings Button -->
-      <v-btn prepend-icon="mdi-cog-box" color="black"> 
-        Settings
-        <v-menu
-          activator="parent"
-          transition="slide-y-transition">
-          <v-list style="height: auto; width: 200px; text-align: center;"
-          >
-          Select Color Theme
+          <!-- Settings Button -->
+          <v-btn :color="taskStore.darkMode ? 'black' : 'white'" prepend-icon="mdi-cog-box">
+            Settings
+            <v-menu
+              activator="parent"
+              transition="slide-y-transition">
+              <v-list style="height: auto; width: 200px; text-align: center;"
+              >
+              Select Color Theme
 
-            <v-list-item
-              v-for="(color, i) in colorThemes"
-              :key="i"
-              @click="newColorTheme(color.vid);"
+                <v-list-item
+                  v-for="(color, i) in colorThemes"
+                  :key="i"
+                  @click="newColorTheme(color.vid);"
+                >
+                {{ color.name }}
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-btn>
+
+          <!-- Profile Button -->
+          <v-btn prepend-icon="mdi-account" :color="taskStore.darkMode ? 'black' : 'white'" style="margin-right: 2.5%">
+            Profile
+            <v-menu
+              activator="parent"
+              transition="slide-y-transition"
             >
-            {{ color.name }}
+            <v-btn @click="signOut">Sign Out</v-btn>
+            <v-list style="height: auto; width: 200px"></v-list>
+            </v-menu>
+          </v-btn>
+        </v-app-bar>
+            
+        <!-- Navigation Bar -->
+        <v-navigation-drawer
+          v-model="taskDrawer"
+          width="400">
+
+          <!-- Add Tasks Button -->
+          <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 65px; margin-top: 5%"  >
+            Add Task
+          </v-btn>
+
+          <!-- Select Tasks Button -->
+          <v-btn @click.stop="visibleCheckBox = !visibleCheckBox" :color="taskStore.colorTheme" style="margin-left: 5%; margin-top: 5%" >Select Tasks</v-btn>
+          <v-list>
+            <v-list-item
+              v-for="item in taskStore.items"
+              :key="item.tId"
+              :value="item"
+              color="primary"
+              >
+              <template v-slot:prepend>
+                <!-- <v-icon :icon="item.icon"></v-icon> -->
+                <v-checkbox-btn
+                  v-if="visibleCheckBox">
+                </v-checkbox-btn>
+              </template>
+              <v-list-item-title v-text="item.title"></v-list-item-title>
             </v-list-item>
           </v-list>
-        </v-menu>
-      </v-btn>
+        </v-navigation-drawer>
 
-      <!-- Profile Button -->
-      <v-btn prepend-icon="mdi-account" color="black" style="margin-right: 2.5%">
-        Profile
-        <v-menu
-          activator="parent"
-          transition="slide-y-transition"
+        <!-- Main Content Display Area -->
+        <v-main
+        class="d-flex align-center justify-center"
+        v-model="taskStore.darkMode"
+        :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF' }"
         >
-        <v-list style="height: auto; width: 200px"></v-list>
-        </v-menu>
-      </v-btn>
-    </v-app-bar>
-      
-    <!-- Navigation Bar -->
-    <v-navigation-drawer
-      v-model="taskDrawer"
-      width="400">
 
-      <!-- Add Tasks Button -->
-      <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 65px; margin-top: 5%"  >
-        Add Task
-      </v-btn>
-
-      <!-- Select Tasks Button -->
-      <v-btn @click.stop="visibleCheckBox = !visibleCheckBox" :color="taskStore.colorTheme" style="margin-left: 5%; margin-top: 5%" >Select Tasks</v-btn>
-      <v-list>
-        <v-list-item
-          v-for="item in taskStore.items"
-          :key="item.tId"
-          :value="item"
-          color="primary"
+          <!-- Progress Chart -->
+          <v-progress-circular
+            :color="taskStore.colorTheme"
+            :size="512"
+            :width="72"
+            :rotate="360"
+            justify="center"
+            style="font-size: 36px;"
+            model-value="totalProgress"
           >
+<<<<<<< Updated upstream
           <template v-slot:prepend>
             <!-- <v-icon :icon="item.icon"></v-icon> -->
             <v-checkbox-btn
@@ -132,46 +168,100 @@
         ></v-text-field>
 
         <!-- Select Date -->
+=======
+            <span>{{ totalProgress }} %</span>
+          </v-progress-circular>
+          <!-- <v-sparkline
+          :auto-line-width="autoLineWidth"
+          :fill="fill"
+          :gradient="gradient"
+          :gradient-direction="gradientDirection"
+          :line-width="width"
+          :model-value="totalProgress"
+          :padding="padding"
+          :smooth="radius || false"
+          :stroke-linecap="lineCap"
+          :type="type"
+          auto-draw></v-sparkline> -->
+
+        </v-main>
+
+        <!-- Add Task Button Dialogue Window -->
+>>>>>>> Stashed changes
         <div>
-          <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="taskStore.colorTheme" style="margin: 10px">
-            Select End Date
-          </v-btn>
-          <!-- FIXME: attach it to something else -->
-          <v-text-feild variant="outlined">{{ endDate }}</v-text-feild>
+          <v-dialog
+            v-model="addTaskDialogue"
+            width="1000">
+            <v-card
+              prepend-icon="mdi-calendar-check"
+              title="Add a New Task" 
+            >
+              <v-divider style="margin: 10px"></v-divider>
+
+              <!-- Title -->
+              <v-text-field
+              label="Title" 
+              variant="outlined" 
+              style="margin-left: 10px; margin-top: 10px; margin-right: 40%;"
+              ></v-text-field>
+
+              <!-- Select Date -->
+              <div>
+                <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="taskStore.colorTheme" style="margin: 10px">
+                  Select End Date
+                </v-btn>
+                <!-- FIXME: attach it to something else -->
+                <v-text-field variant="outlined">{{ endDate }}</v-text-field>
+              </div>
+              <v-dialog v-model="dateSelectDialogue" width="auto">
+                <!-- FIXME: attach it to something else -->
+                <v-date-picker :color="taskStore.colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
+              </v-dialog>
+
+              <!-- Description -->
+              <v-textarea
+              label="Description" 
+              variant="outlined" 
+              style="margin-left: 10px; margin-right: 10px; height: 40%"
+              >
+              </v-textarea>
+
+              <!-- Action Buttons -->
+              <v-row justify="space-between" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
+                <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme">Cancel</v-btn>
+                <v-btn :color="taskStore.colorTheme">Add Task</v-btn>
+              </v-row>
+
+            </v-card>
+          </v-dialog>
         </div>
-        <v-dialog v-model="dateSelectDialogue" width="auto">
-          <!-- FIXME: attach it to something else -->
-          <v-date-picker :color="taskStore.colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
-        </v-dialog>
-
-        <!-- Description -->
-        <v-textarea
-         label="Description" 
-         variant="outlined" 
-         style="margin-left: 10px; margin-right: 10px; height: 40%"
-         >
-         </v-textarea>
-
-        <!-- Action Buttons -->
-        <v-row justify="space-between" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
-          <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme">Cancel</v-btn>
-          <v-btn :color="taskStore.colorTheme">Add Task</v-btn>
-        </v-row>
-
-        </v-card>
-      </v-dialog>
-    </div>
-
+      </div>
+    </v-main>
   </v-app>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import { useTaskStore } from "./stores/tasks";
-import { createUser } from "./stores/user";
-
+import { ref, computed, onMounted } from 'vue';
+import { useTaskStore, createUser } from "./stores/tasks";
+import { auth, uiConfig, firebaseui } from './firebase'; 
+import { getAuth } from 'firebase/auth';
 const taskStore = useTaskStore();
-const user = createUser();
+const user = ref(auth.currentUser);
+
+onMounted(() => {
+  auth.onAuthStateChanged((u) => {
+    user.value = u;
+    if (u) {
+      // If a user exists
+      const authInstance = getAuth();
+      const email = u.email;
+    } else {
+      // User is not logged in, start Firebase UI
+      const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+      ui.start('#firebaseui-auth-container', uiConfig);
+    }
+  });
+});
 
 const taskDrawer = ref(false);
 const visibleCheckBox = ref(false);
@@ -192,9 +282,13 @@ const totalProgress = computed(() => {
 })
 
 function newColorTheme(newColor) {
-  this.colorTheme = newColor;
   taskStore.colorTheme = newColor;
 };
+function signOut() {
+  auth.signOut();
+  user.value = null;
+}
+
 
 
 </script>
