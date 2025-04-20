@@ -103,7 +103,6 @@
             :size="512"
             :width="72"
             :rotate="360"
-            justify="center"
             style="font-size: 36px;"
             model-value="totalProgress"
           >
