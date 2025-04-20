@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main >
       <div v-if="!user">
-        <h2>Please sign in</h2>
+        <h2 style="text-align: center;">Please sign in</h2>
         <div id="firebaseui-auth-container"></div>
       </div>
 
@@ -47,8 +47,9 @@
               activator="parent"
               transition="slide-y-transition"
             >
-            <v-btn @click="signOut">Sign Out</v-btn>
-            <v-list style="height: auto; width: 200px"></v-list>
+            <v-list style="height: auto; width: 200px; text-align: center">
+              <v-btn @click="signOut">Sign Out</v-btn>
+            </v-list>
             </v-menu>
           </v-btn>
         </v-app-bar>
@@ -68,7 +69,7 @@
           <v-list>
             <v-list-item
               v-for="item in taskStore.items"
-              :key="item.tId"
+              :key="item.tid"
               :value="item"
               color="primary"
               >
@@ -85,9 +86,10 @@
 
         <!-- Main Content Display Area -->
         <v-main
-        class="d-flex align-center justify-center"
+        class="d-flex justify-center"
         v-model="taskStore.darkMode"
-        :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF' }"
+        style="height: 100vh; width: auto;"
+        :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF'}"
         >
 
           <!-- Progress Chart -->
@@ -100,94 +102,11 @@
             style="font-size: 36px;"
             model-value="totalProgress"
           >
-<<<<<<< Updated upstream
-          <template v-slot:prepend>
-            <!-- <v-icon :icon="item.icon"></v-icon> -->
-            <v-checkbox-btn
-              v-if="visibleCheckBox">
-            </v-checkbox-btn>
-
-          </template>
-          <v-list-item-title v-text="item.title"></v-list-item-title>
-          <v-divider></v-divider>
-
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <!-- Main Content Display Area -->
-    <v-main
-     class="d-flex align-center justify-center"
-     v-model="taskStore.darkMode"
-     :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF' }"
-    >
-
-      <!-- Progress Chart -->
-      <v-progress-circular
-        :color="taskStore.colorTheme"
-        :size="512"
-        :width="72"
-        :rotate="360"
-        justify="center"
-        style="font-size: 36px;"
-        model-value="totalProgress"
-      >
-        <span>{{ totalProgress }} %</span>
-      </v-progress-circular>
-      <!-- <v-sparkline
-      :auto-line-width="autoLineWidth"
-      :fill="fill"
-      :gradient="gradient"
-      :gradient-direction="gradientDirection"
-      :line-width="width"
-      :model-value="totalProgress"
-      :padding="padding"
-      :smooth="radius || false"
-      :stroke-linecap="lineCap"
-      :type="type"
-      auto-draw></v-sparkline> -->
-
-    </v-main>
-
-    <!-- Add Task Button Dialogue Window -->
-    <div>
-      <v-dialog
-        v-model="addTaskDialogue"
-        width="1000">
-        <v-card
-          prepend-icon="mdi-calendar-check"
-          title="Add a New Task" 
-        >
-        <v-divider style="margin: 10px"></v-divider>
-
-        <!-- Title -->
-        <v-text-field
-         label="Title" 
-         variant="outlined" 
-         style="margin-left: 10px; margin-top: 10px; margin-right: 40%;"
-        ></v-text-field>
-
-        <!-- Select Date -->
-=======
             <span>{{ totalProgress }} %</span>
           </v-progress-circular>
-          <!-- <v-sparkline
-          :auto-line-width="autoLineWidth"
-          :fill="fill"
-          :gradient="gradient"
-          :gradient-direction="gradientDirection"
-          :line-width="width"
-          :model-value="totalProgress"
-          :padding="padding"
-          :smooth="radius || false"
-          :stroke-linecap="lineCap"
-          :type="type"
-          auto-draw></v-sparkline> -->
-
         </v-main>
 
         <!-- Add Task Button Dialogue Window -->
->>>>>>> Stashed changes
         <div>
           <v-dialog
             v-model="addTaskDialogue"
@@ -288,9 +207,6 @@ function signOut() {
   auth.signOut();
   user.value = null;
 }
-
-
-
 </script>
 
 <style scoped>
