@@ -16,7 +16,7 @@
             :label="'Dark Mode' "
             :color="taskStore.darkMode ? 'black' : 'white'"
             :label-color="taskStore.darkMode ? 'white' : 'black'"
-            style="margin-top: 20px; margin-right:20px">
+            style="margin-top: 20px; margin-right:20px;">
           </v-switch>
 
           <!-- Settings Button -->
@@ -25,7 +25,7 @@
             <v-menu
               activator="parent"
               transition="slide-y-transition">
-              <v-list style="height: auto; width: 200px; text-align: center;"
+              <v-list style="height: auto; width: 200px; text-align: left; padding-left:17%"
               >
               Select Color Theme
 
@@ -34,7 +34,12 @@
                   :key="i"
                   @click="newColorTheme(color.vid);"
                 >
-                {{ color.name }}
+                  <v-icon
+                    icon="mdi-circle"
+                    :color="color.vid"
+                  ></v-icon>
+                 
+                  {{ color.name }}
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -130,7 +135,9 @@
                   Select End Date
                 </v-btn>
                 <!-- FIXME: attach it to something else -->
-                <v-text-field variant="outlined">{{ endDate }}</v-text-field>
+                <v-text-field
+                  variant="outlined"
+                  style="margin-left: 10px; margin-right: 50%">{{ endDate }}</v-text-field>
               </div>
               <v-dialog v-model="dateSelectDialogue" width="auto">
                 <!-- FIXME: attach it to something else -->
@@ -210,4 +217,7 @@ function signOut() {
 </script>
 
 <style scoped>
+.v-switch label {
+  color: "taskStore.darkMode ? 'black' : 'white'"
+}
 </style>
