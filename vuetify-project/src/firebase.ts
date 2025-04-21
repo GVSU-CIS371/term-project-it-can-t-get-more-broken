@@ -23,33 +23,20 @@ const analytics = firebase.analytics();
 
 // FirebaseUI config
 const uiConfig = {
-  signInFlow: "popup",  // Use popup flow for sign-in
+  signInFlow: "popup",  // Use popup flow for sign-in TODO: change to redirect
   signInOptions: [
     firebase.auth.EmailAuthProvider.PROVIDER_ID, // Email/password sign-in
     firebase.auth.GoogleAuthProvider.PROVIDER_ID, // Google sign-in
+    firebase.auth.FacebookAuthProvider.PROVIDER_ID, // Facebook sign-in
   ],
   signInSuccessUrl: '/', // Redirect on successful sign-in
-  callbacks: {
-    signInFailure: (error: { code: string; email: any; credential: any; }) => {
-      console.log("SignIn Failure", error);
-      if (error.code === 'auth/account-exists-with-different-credential') {
-        const email = error.email;
-        const pendingCred = error.credential;
 
-        // Fetch sign-in methods for the email to get the correct provider
-        firebase.auth().fetchSignInMethodsForEmail(email).then((methods) => {
-          if (methods.includes(firebase.auth.EmailAuthProvider.PROVIDER_ID)) {
-            // Email/password method exists; prompt user to set a password
-            console.log("Account exists with a different provider. You can reset your password.");
-            // You can add custom handling for password reset here.
-          } else {
-            // The account exists via other providers (e.g., Google)
-            console.log("Account exists, but needs password setup");
-          }
-        });
-      }
-    },
-  },
+  callbacks: {
+    signInSuccessWithAuthResult: (authResult) => {
+      console.log('Signed in user:', authResult.user);
+      return true;
+    }
+  }
 };
 
 export { app, auth, analytics, uiConfig, firebaseui };

@@ -174,6 +174,7 @@ const taskStore = useTaskStore();
 const user = ref(auth.currentUser);
 
 onMounted(() => {
+  
   auth.onAuthStateChanged((u) => {
     user.value = u;
     if (u) {
