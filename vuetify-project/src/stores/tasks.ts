@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { CollectionReference, DocumentReference, addDoc, setDoc, deleteDoc, doc, collection, Timestamp, getDoc, getDocs, Firestore } from "firebase/firestore";
 import { db } from "../firebase";
+import { id } from "vuetify/locale";
 
 interface Task {
     tid: string;
@@ -15,7 +16,7 @@ interface tStore {
     darkMode: boolean;
     completed: number;
     items: Task[];
-    selectedTasks: string[]
+    selectedTasks: [];
 }
 
 export const useTaskStore = defineStore("TaskStore", {
@@ -64,11 +65,17 @@ export const useTaskStore = defineStore("TaskStore", {
 
       // delete task from databse and items array
       async deleteSelectedTasks() {
-        for (const docRef of this.selectedTasks) {
-          await deleteDoc(docRef);
-          this.selectedTasks.pop(docRef);
+        try {
+          for (const docRef of this.selectedTasks) {
+            await deleteDoc(doc(db, 'tasks', docRef));
+            this.items = this.items.filter(obj => obj['tid'] !== docRef);
+          }
+          this.selectedTasks.length = 0;
         }
-      }
+        catch (overallError){
+          console.error(overallError);
+        }
+    }
 
       //calculate the percentage of tasks completed
 

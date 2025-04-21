@@ -78,7 +78,7 @@
             style="margin-left: 5%; margin-top: 5%" 
             icon="mdi-delete" 
             size="small"
-            @click=""></v-btn> 
+            @click="taskStore.deleteSelectedTasks()"></v-btn> 
           <v-list>
             <v-list-item
               v-for="item in taskStore.items"
