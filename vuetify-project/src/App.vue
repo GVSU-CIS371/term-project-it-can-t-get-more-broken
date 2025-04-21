@@ -62,8 +62,8 @@
         <!-- Navigation Bar -->
         <v-navigation-drawer
           v-model="taskDrawer"
-          width="400">
-
+          temporary
+          width = "400">
           <!-- Add Tasks Button -->
           <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 65px; margin-top: 5%"  >
             Add Task

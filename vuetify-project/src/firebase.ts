@@ -23,20 +23,13 @@ const analytics = firebase.analytics();
 
 // FirebaseUI config
 const uiConfig = {
-  signInFlow: "popup",  // Use popup flow for sign-in TODO: change to redirect
+  signInFlow: "popup",
   signInOptions: [
     firebase.auth.EmailAuthProvider.PROVIDER_ID, // Email/password sign-in
     firebase.auth.GoogleAuthProvider.PROVIDER_ID, // Google sign-in
     firebase.auth.FacebookAuthProvider.PROVIDER_ID, // Facebook sign-in
   ],
   signInSuccessUrl: '/', // Redirect on successful sign-in
-
-  callbacks: {
-    signInSuccessWithAuthResult: (authResult) => {
-      console.log('Signed in user:', authResult.user);
-      return true;
-    }
-  }
 };
 
 export { app, auth, analytics, uiConfig, firebaseui };
