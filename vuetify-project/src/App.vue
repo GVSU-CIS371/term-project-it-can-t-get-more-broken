@@ -82,7 +82,7 @@
           <v-list>
             <v-list-item
               v-for="item in taskStore.items"
-              :key="item.id"
+              :key="item.tid"
               :value="item"
               color="primary"
               @mouseover="isHovered = true"
@@ -93,7 +93,7 @@
                 <v-checkbox-btn
                   v-if="visibleCheckBox"
                   :key="item.tid"
-                  @click="taskStore.addSelectedTask(item.id)"
+                  @click="taskStore.addSelectedTask(item.tid)"
                 >
                 </v-checkbox-btn>
               </template>

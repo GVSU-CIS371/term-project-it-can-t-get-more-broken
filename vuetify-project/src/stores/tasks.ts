@@ -38,7 +38,7 @@ export const useTaskStore = defineStore("TaskStore", {
 
         QS.forEach((doc) => {
           if (uid.value == doc.data().uid) {
-            this.items.push({ id: doc.id, ...doc.data()})
+            this.items.push({ tid: doc.id, ...doc.data()})
           }
         })
       },
@@ -66,10 +66,15 @@ export const useTaskStore = defineStore("TaskStore", {
       // delete task from databse and items array
       async deleteSelectedTasks() {
         try {
+          console.log(this.items)
           for (const docRef of this.selectedTasks) {
             await deleteDoc(doc(db, 'tasks', docRef));
-            this.items = this.items.filter(obj => obj['tid'] !== docRef);
+            console.log(docRef)
+            console.log(this.items)
+            this.items = this.items.filter(task => task.tid != docRef);
+            console.log(this.items)
           }
+          
           this.selectedTasks.length = 0;
         }
         catch (overallError){
