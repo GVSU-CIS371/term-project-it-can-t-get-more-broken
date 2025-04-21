@@ -14,8 +14,10 @@ interface Task {
 interface tStore {
     colorTheme: string;
     darkMode: boolean;
-    completed: number;
+    completedTasks: number;
+    percentCompleted: number;
     items: Task[];
+    undeletedItems: Task[],
     selectedTasks: string[];
 }
 
@@ -24,8 +26,10 @@ export const useTaskStore = defineStore("TaskStore", {
     state: (): tStore => ({
       colorTheme: "#0091EA",
       darkMode: true,
-      completed: 0,
+      completedTasks: 0,
+      percentCompleted: 100,
       items:  [],
+      undeletedItems: [],
       selectedTasks: []
     }),
 
@@ -39,6 +43,7 @@ export const useTaskStore = defineStore("TaskStore", {
         QS.forEach((doc) => {
           if (uid.value == doc.data().uid) {
             this.items.push({ tid: doc.id, ...doc.data()})
+            this.undeletedItems.push({ tid: doc.id, ...doc.data()})
           }
         })
       },
@@ -54,6 +59,7 @@ export const useTaskStore = defineStore("TaskStore", {
          };
          const docRef = await addDoc(collection( db, 'tasks'), taskObject);
          this.items.push({ tid: docRef.id, ...taskObject});
+         this.undeletedItems.push({ tid: docRef.id, ...taskObject});
       },
 
       //add selected task to list
@@ -72,6 +78,7 @@ export const useTaskStore = defineStore("TaskStore", {
           for (const docRef of this.selectedTasks) {
             await deleteDoc(doc(db, 'tasks', docRef));
             this.items = this.items.filter(task => task.tid != docRef);
+            this.undeletedItems = this.undeletedItems.filter(task => task.tid != docRef);
           }
           
           this.selectedTasks.length = 0;
@@ -79,9 +86,20 @@ export const useTaskStore = defineStore("TaskStore", {
         catch (overallError){
           console.error(overallError);
         }
-    }
+      },
 
-      //calculate the percentage of tasks completed
+      //calculate number of tasks completed
+      async completeTasks(docRef) {
+        await deleteDoc(doc(db, 'tasks', docRef));
+        this.completedTasks++;
+        this.items = this.items.filter(task => task.tid != docRef);
+        this.calcPercentCompleted();
+      },
 
-    }
-  });
+      //calculate percentage of tasks completed
+      async calcPercentCompleted() {
+        if (this.undeletedItems.length > 0) {
+          this.percentCompleted = Math.ceil((this.completedTasks / this.undeletedItems.length) * 100);
+        }
+      }
+  }});

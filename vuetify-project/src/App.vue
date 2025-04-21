@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main >
+    <v-main>
       <div v-if="!user">
         <h2 style="text-align: center;">Please sign in</h2>
         <div id="firebaseui-auth-container"></div>
@@ -77,6 +77,7 @@
             style="margin-left: 5%; margin-top: 5%" 
             icon="mdi-delete" 
             size="small"
+            color="#C62828"
             @click="taskStore.deleteSelectedTasks()"></v-btn> 
           <v-list>
             <v-list-item
@@ -99,31 +100,64 @@
               
                 <v-list-item-title v-text="item.name"></v-list-item-title>
               <template v-slot:append>
-                <v-btn icon="mdi-delete" size="small" v-if="isHovered"></v-btn>
+                <v-btn
+                  icon="mdi-check"
+                  size="small"
+                  v-if="isHovered"
+                  @click="taskStore.completeTasks(item.tid)"></v-btn>
               </template>
               
+              
+
               </v-list-item>
           </v-list>
         </v-navigation-drawer>
 
         <!-- Main Content Display Area -->
-        <div
+        <v-container
         style="height: 100vh; display: flex; justify-content: center; align-items: center;"
         :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF'}"
+        fluid
         >
+        <v-col>
+          <v-row>
+            <v-col style="background-color: white; display: flex; justify-content: center; align-items: center; margin: ">
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col style="display: flex; justify-content: center; align-items: center;">
+              <div>
+                <!-- Progress Chart -->
+                <v-progress-circular
+                  :color="taskStore.colorTheme"
+                  :size="512"
+                  :width="45"
+                  :rotate="360"
+                  style="font-size: 36px;"
+                  :model-value="taskStore.percentCompleted"
+                >
+                  <span>{{ taskStore.percentCompleted }}% Tasks Completed</span>
+                </v-progress-circular>
+              </div>
+            </v-col>
+              
+            <v-divider vertical></v-divider>
 
-          <!-- Progress Chart -->
-          <v-progress-circular
-            :color="taskStore.colorTheme"
-            :size="512"
-            :width="72"
-            :rotate="360"
-            style="font-size: 36px;"
-            model-value="totalProgress"
-          >
-            <span>{{ totalProgress }} Tasks Left</span>
-          </v-progress-circular>
-        </div>
+            <v-col style="display: flex; justify-content: center; align-items: center;">
+                <v-progress-circular
+                    :color="taskStore.colorTheme"
+                    :size="512"
+                    :width="45"
+                    :rotate="360"
+                    style="font-size: 36px;"
+                    :model-value="taskStore.percentCompleted"
+                  >
+                  <span>{{ taskStore.completedTasks }} Tasks Completed!</span>
+                </v-progress-circular>
+            </v-col>
+          </v-row>
+        </v-col>
+        </v-container>
 
         <!-- Add Task Button Dialogue Window -->
         <div>
@@ -246,10 +280,6 @@ const colorThemes = [
   {name: "Green", vid: "#64DD17"}
 ]
 
-const totalProgress = computed(() => {
-  return taskStore.items.length
-})
-
 const handleSubmit = async() => {
   if (taskName.value.length >= 1 && uid.value) {
     await taskStore.addTask( uid.value, taskName.value, endDate.value, taskDescription.value)
@@ -271,6 +301,10 @@ const nameRules = [
     }
   }
 ];
+
+function newColorTheme(vid) {
+  taskStore.colorTheme = vid
+}
 
 function signOut() {
   auth.signOut();
