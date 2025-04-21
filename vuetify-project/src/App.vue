@@ -84,7 +84,7 @@
                   v-if="visibleCheckBox">
                 </v-checkbox-btn>
               </template>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
+              <v-list-item-title v-text="item.name"></v-list-item-title>
             </v-list-item>
           </v-list>
         </v-navigation-drawer>
@@ -120,43 +120,55 @@
               title="Add a New Task" 
             >
               <v-divider style="margin: 10px"></v-divider>
+                <v-form 
+                  fast-fail
+                  @submit.prevent="handleSubmit"
+                >
+                  <!-- Title -->
+                  <v-text-field
+                    v-model="taskName"
+                    label="Task Name" 
+                    variant="outlined" 
+                    style="margin-left: 10px; margin-top: 10px; margin-right: 40%;"
+                    clearable
+                    :rules="nameRules"
+                  ></v-text-field>
 
-              <!-- Title -->
-              <v-text-field
-              label="Title" 
-              variant="outlined" 
-              style="margin-left: 10px; margin-top: 10px; margin-right: 40%;"
-              ></v-text-field>
+                  <!-- Select Date -->
+                  <div>
+                    <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="taskStore.colorTheme" style="margin: 10px">
+                      Select End Date
+                    </v-btn>
+                    <!-- FIXME: attach it to something else -->
+                    <v-text-field
+                      v-model="endDate"
+                      variant="outlined"
+                      style="margin-left: 10px; margin-right: 50%"
+                      clearable
+                      label="End Date"
+                    ></v-text-field>   
+                  </div>
+                  <v-dialog v-model="dateSelectDialogue" width="auto">
+                    <!-- FIXME: attach it to something else -->
+                    <v-date-picker :color="taskStore.colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
+                  </v-dialog>
 
-              <!-- Select Date -->
-              <div>
-                <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="taskStore.colorTheme" style="margin: 10px">
-                  Select End Date
-                </v-btn>
-                <!-- FIXME: attach it to something else -->
-                <v-text-field
-                  variant="outlined"
-                  style="margin-left: 10px; margin-right: 50%">{{ endDate }}</v-text-field>
-              </div>
-              <v-dialog v-model="dateSelectDialogue" width="auto">
-                <!-- FIXME: attach it to something else -->
-                <v-date-picker :color="taskStore.colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
-              </v-dialog>
+                  <!-- Description -->
+                  <v-textarea
+                    v-model="taskDescription"
+                    label="Description" 
+                    variant="outlined" 
+                    style="margin-left: 10px; margin-right: 10px; height: 40%"
+                    clearable
+                  >
+                  </v-textarea>
 
-              <!-- Description -->
-              <v-textarea
-              label="Description" 
-              variant="outlined" 
-              style="margin-left: 10px; margin-right: 10px; height: 40%"
-              >
-              </v-textarea>
-
-              <!-- Action Buttons -->
-              <v-row justify="space-between" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
-                <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme">Cancel</v-btn>
-                <v-btn :color="taskStore.colorTheme">Add Task</v-btn>
-              </v-row>
-
+                <!-- Action Buttons -->
+                <v-row justify="space-between" style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
+                  <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme">Cancel</v-btn>
+                  <v-btn type="submit" :color="taskStore.colorTheme">Add Task</v-btn>
+                </v-row>
+              </v-form>
             </v-card>
           </v-dialog>
         </div>
@@ -166,10 +178,14 @@
 </template>
 
 <script lang="ts" setup>
+// imports
 import { ref, computed, onMounted } from 'vue';
 import { useTaskStore, createUser } from "./stores/tasks";
 import { auth, uiConfig, firebaseui } from './firebase'; 
 import { getAuth } from 'firebase/auth';
+import { NULL } from 'sass-embedded';
+
+// authentication
 const taskStore = useTaskStore();
 const user = ref(auth.currentUser);
 
@@ -188,10 +204,16 @@ onMounted(() => {
   });
 });
 
+//booleans
 const taskDrawer = ref(false);
 const visibleCheckBox = ref(false);
 const addTaskDialogue = ref(false);
 const dateSelectDialogue = ref(false);
+
+//v-model values
+const taskName = ref<string >('');
+const endDate = ref< Date | null >(null);
+const taskDescription = ref<string>('');
 
 const colorThemes = [ 
   {name: "Red", vid: "#E53935"},
@@ -206,9 +228,30 @@ const totalProgress = computed(() => {
   return (taskStore.completed / taskStore.items.length)
 })
 
+const handleSubmit = async() => {
+  if (taskName.value.length >= 1) {
+    await taskStore.addTask( taskName.value, endDate.value, taskDescription.value)
+    taskName.value = '';
+    endDate.value = null;
+    taskDescription.value = '';
+  }
+}
+
+const nameRules = [
+  value => {
+    if (value?.length < 1) {
+      return 'Task must have a name'
+    }
+    else {
+      return true;
+    }
+  }
+];
+
 function newColorTheme(newColor) {
   taskStore.colorTheme = newColor;
 };
+
 function signOut() {
   auth.signOut();
   user.value = null;

@@ -4,6 +4,7 @@ import "firebase/compat/auth";
 import "firebase/compat/analytics";
 import "firebaseui/dist/firebaseui.css";
 import * as firebaseui from "firebaseui";
+import { getFirestore, Firestore } from "firebase/firestore";
 
 // Your Firebase config
 const firebaseConfig = {
@@ -20,6 +21,7 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const analytics = firebase.analytics();
+const db: Firestore = getFirestore(app);
 
 // FirebaseUI config
 const uiConfig = {
@@ -52,4 +54,4 @@ const uiConfig = {
   },
 };
 
-export { app, auth, analytics, uiConfig, firebaseui };
+export { app, db, auth, analytics, uiConfig, firebaseui };
