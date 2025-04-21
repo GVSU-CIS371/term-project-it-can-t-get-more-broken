@@ -62,7 +62,6 @@
         <!-- Navigation Bar -->
         <v-navigation-drawer
           v-model="taskDrawer"
-          temporary
           width = "400">
           <!-- Add Tasks Button -->
           <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 25px; margin-top: 5%"  >
@@ -108,10 +107,8 @@
         </v-navigation-drawer>
 
         <!-- Main Content Display Area -->
-        <v-main
-        class="d-flex justify-center"
-        v-model="taskStore.darkMode"
-        style="height: 100vh; width: auto;"
+        <div
+        style="height: 100vh; display: flex; justify-content: center; align-items: center;"
         :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF'}"
         >
 
@@ -126,7 +123,7 @@
           >
             <span>{{ totalProgress }} Tasks Left</span>
           </v-progress-circular>
-        </v-main>
+        </div>
 
         <!-- Add Task Button Dialogue Window -->
         <div>
@@ -274,10 +271,6 @@ const nameRules = [
     }
   }
 ];
-
-function newColorTheme(newColor) {
-  taskStore.colorTheme = newColor;
-};
 
 function signOut() {
   auth.signOut();
