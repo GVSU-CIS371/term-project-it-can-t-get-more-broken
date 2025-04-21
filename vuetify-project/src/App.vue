@@ -65,27 +65,45 @@
           temporary
           width = "400">
           <!-- Add Tasks Button -->
-          <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 65px; margin-top: 5%"  >
+          <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 25px; margin-top: 5%"  >
             Add Task
           </v-btn>
 
           <!-- Select Tasks Button -->
           <v-btn @click.stop="visibleCheckBox = !visibleCheckBox" :color="taskStore.colorTheme" style="margin-left: 5%; margin-top: 5%" >Select Tasks</v-btn>
+
+          <!-- Large delete button -->
+          <v-btn
+            justify="center"
+            style="margin-left: 5%; margin-top: 5%" 
+            icon="mdi-delete" 
+            size="small"
+            @click=""></v-btn> 
           <v-list>
             <v-list-item
               v-for="item in taskStore.items"
-              :key="item.tid"
+              :key="item.id"
               :value="item"
               color="primary"
+              @mouseover="isHovered = true"
+              @mouseleave="isHovered = false"
               >
               <template v-slot:prepend>
                 <!-- <v-icon :icon="item.icon"></v-icon> -->
                 <v-checkbox-btn
-                  v-if="visibleCheckBox">
+                  v-if="visibleCheckBox"
+                  :key="item.tid"
+                  @click="taskStore.addSelectedTask(item.id)"
+                >
                 </v-checkbox-btn>
               </template>
-              <v-list-item-title v-text="item.name"></v-list-item-title>
-            </v-list-item>
+              
+                <v-list-item-title v-text="item.name"></v-list-item-title>
+              <template v-slot:append>
+                <v-btn icon="mdi-delete" size="small" v-if="isHovered"></v-btn>
+              </template>
+              
+              </v-list-item>
           </v-list>
         </v-navigation-drawer>
 
@@ -106,7 +124,7 @@
             style="font-size: 36px;"
             model-value="totalProgress"
           >
-            <span>{{ totalProgress }} %</span>
+            <span>{{ totalProgress }} Tasks Left</span>
           </v-progress-circular>
         </v-main>
 
@@ -139,7 +157,6 @@
                     <v-btn @click="dateSelectDialogue = !dateSelectDialogue" :color="taskStore.colorTheme" style="margin: 10px">
                       Select End Date
                     </v-btn>
-                    <!-- FIXME: attach it to something else -->
                     <v-text-field
                       v-model="endDate"
                       variant="outlined"
@@ -149,7 +166,6 @@
                     ></v-text-field>   
                   </div>
                   <v-dialog v-model="dateSelectDialogue" width="auto">
-                    <!-- FIXME: attach it to something else -->
                     <v-date-picker :color="taskStore.colorTheme" v-model="endDate" @input="dateSelectDialogue = false"></v-date-picker>
                   </v-dialog>
 
@@ -208,13 +224,8 @@ onMounted(() => {
   });
 
   taskStore.getUserTasks(uid);
-  
+
 });
-
-
-
-
-
 
 
 //booleans
@@ -222,6 +233,7 @@ const taskDrawer = ref(false);
 const visibleCheckBox = ref(false);
 const addTaskDialogue = ref(false);
 const dateSelectDialogue = ref(false);
+const isHovered = ref(false);
 
 //v-model values
 const taskName = ref<string >('');
@@ -238,7 +250,7 @@ const colorThemes = [
 ]
 
 const totalProgress = computed(() => {
-  return (taskStore.completed / taskStore.items.length)
+  return taskStore.items.length
 })
 
 const handleSubmit = async() => {
