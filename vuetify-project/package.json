@@ -15,6 +15,8 @@
     "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/font": "7.4.47",
     "@mdi/js": "^7.4.47",
+    "firebase": "^11.6.0",
+    "firebaseui": "^6.1.0",
     "roboto-fontface": "*",
     "vue": "^3.5.13",
     "vuetify": "^3.8.1"
