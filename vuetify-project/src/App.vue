@@ -182,17 +182,18 @@
 import { ref, computed, onMounted } from 'vue';
 import { useTaskStore, createUser } from "./stores/tasks";
 import { auth, uiConfig, firebaseui } from './firebase'; 
-import { getAuth } from 'firebase/auth';
-import { NULL } from 'sass-embedded';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 // authentication
 const taskStore = useTaskStore();
 const user = ref(auth.currentUser);
+const uid = ref<string | null>(user.value?.uid || null);
 
 onMounted(() => {
   
   auth.onAuthStateChanged((u) => {
     user.value = u;
+    uid.value = u?.uid || null;
     if (u) {
       // If a user exists
       const authInstance = getAuth();
@@ -201,9 +202,14 @@ onMounted(() => {
       // User is not logged in, start Firebase UI
       const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
       ui.start('#firebaseui-auth-container', uiConfig);
+      uid.value = null;
     }
   });
 });
+
+
+
+
 
 //booleans
 const taskDrawer = ref(false);
@@ -230,11 +236,13 @@ const totalProgress = computed(() => {
 })
 
 const handleSubmit = async() => {
-  if (taskName.value.length >= 1) {
-    await taskStore.addTask( taskName.value, endDate.value, taskDescription.value)
+  if (taskName.value.length >= 1 && uid.value) {
+    await taskStore.addTask( uid.value, taskName.value, endDate.value, taskDescription.value)
     taskName.value = '';
     endDate.value = null;
     taskDescription.value = '';
+  } else {
+    console.log("User not signed in. Cannot add tasks")
   }
 }
 

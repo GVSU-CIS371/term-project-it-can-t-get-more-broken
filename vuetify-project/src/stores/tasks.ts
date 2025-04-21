@@ -5,7 +5,7 @@ import { db } from "../firebase";
 interface Task {
     tid: string;
     uid: string;
-    title: string;
+    name: string;
     description: string;
     date: Date;
 };
@@ -29,21 +29,21 @@ export const useTaskStore = defineStore("TaskStore", {
     actions: {
 
       // add task to database an items array
-      async addTask(name: string, date: Date, description: string) {
+      async addTask(uid: string, name: string, date: Date, description: string) {
+
+
 
          const taskObject = {
+            uid: uid ? uid : null,
             name: name,
             date: date ? Timestamp.fromDate(date) : null,
             description: description || null
          }
-
-         //send this object to the collection
-        
          const docRef = await addDoc(collection( db, 'tasks'), taskObject)
-         
-         //update state and give collection object an ID
-         this.items.push({ id: docRef.id, ...taskObject})
+         this.items.push({ tid: docRef.id, ...taskObject})
       }
+
+
 
       // update task
 
