@@ -198,6 +198,7 @@ onMounted(() => {
       // If a user exists
       const authInstance = getAuth();
       const email = u.email;
+      
     } else {
       // User is not logged in, start Firebase UI
       const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
@@ -205,7 +206,12 @@ onMounted(() => {
       uid.value = null;
     }
   });
+
+  taskStore.getUserTasks(uid);
+  
 });
+
+
 
 
 
