@@ -3,6 +3,14 @@ import { CollectionReference, DocumentReference, addDoc, setDoc, deleteDoc, doc,
 import { db } from "../firebase";
 import { id } from "vuetify/locale";
 
+interface User {
+    uid: string;
+    colorTheme: string;
+    darkMode: boolean;
+    completedTasks: number;
+    undeletedItems: Task[],
+}
+
 interface Task {
     tid: string;
     uid: string;
@@ -34,11 +42,57 @@ export const useTaskStore = defineStore("TaskStore", {
     }),
 
     actions: {
+
+      // add user profile if new
+      async addNewUser(uid: string) {
+        const collectionName = 'users';
+        const CollectionReference = collection(db, collectionName);
+        const QS = await getDocs(CollectionReference);
+        let existingUser = false;
+
+        console.log(uid + " in function")
+
+        QS.forEach((doc) => {
+          const docData = doc.data();
+          if (docData.uid === uid) {
+            existingUser = true;
+          }
+        });
+          
+          if (!existingUser && uid != null) {
+            //set new defaults
+            const userObject = {
+              uid: uid ? uid : null,
+              colorTheme: "#0091EA",
+              darkMode: true,
+              completedTasks: 0,
+              undeletedItems: []
+            };
+
+            const userDocRef = await addDoc(collection( db, 'users'), userObject);
+            return userDocRef;
+          }
+      },
+
       // get current user tasks
-      async getUserTasks(uid) {
-        const collectionName = 'tasks';
+      async getUserTasks(uid, userDocID: string) {
+
+        //get user settings
+        const userDocRef = doc(db, 'users', userDocID);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+
+          this.colorTheme = userData.colorTheme;
+          this.darkMode = userData.darkMode;
+          this.completedTasks = userData.completedTasks;
+          this.undeletedItems = userData.undeletedItems;
+        }
+
+
+        let collectionName = 'tasks';
         const collectionRef = collection(db, collectionName);
-        const QS = await getDocs(collectionRef);
+        QS = await getDocs(collectionRef);
 
         QS.forEach((doc) => {
           if (uid.value == doc.data().uid) {

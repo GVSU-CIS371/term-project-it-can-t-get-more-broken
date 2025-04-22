@@ -230,6 +230,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useTaskStore, createUser } from "./stores/tasks";
 import { auth, uiConfig, firebaseui } from './firebase'; 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { stringify } from 'querystring';
 
 // authentication
 const taskStore = useTaskStore();
@@ -240,11 +241,13 @@ onMounted(() => {
   
   auth.onAuthStateChanged((u) => {
     user.value = u;
-    uid.value = u?.uid || null;
     if (u) {
       // If a user exists
       const authInstance = getAuth();
       const email = u.email;
+      uid.value = u?.uid || null;
+      const userDocID = taskStore.addNewUser(uid.value)
+      taskStore.getUserTasks(uid, userDocID);
       
     } else {
       // User is not logged in, start Firebase UI
@@ -254,8 +257,8 @@ onMounted(() => {
     }
   });
 
-  taskStore.getUserTasks(uid);
-
+  //check userid and get any existing tasks
+  
 });
 
 
