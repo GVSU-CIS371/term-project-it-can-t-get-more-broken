@@ -13,11 +13,11 @@
           <v-app-bar-title :style="{ color: taskStore.darkMode ? 'black' : 'white' }">Hello, {{ user.displayName || user.email }}</v-app-bar-title>
             <v-switch 
             v-model="taskStore.darkMode" 
+            @change="taskStore.updatePref(uid);"
             :label="'Dark Mode' "
             :color="taskStore.darkMode ? 'black' : 'white'"
             :label-color="taskStore.darkMode ? 'white' : 'black'"
             style="margin-top: 20px; margin-right:20px;">
-            @click="taskStore.updatePref(taskStore.uid)"
           </v-switch>
 
           <!-- Settings Button -->
