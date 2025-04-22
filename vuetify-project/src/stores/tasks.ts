@@ -56,6 +56,7 @@ export const useTaskStore = defineStore("TaskStore", {
           const docData = doc.data();
           if (docData.uid === uid) {
             existingUser = true;
+            
           }
         });
           
