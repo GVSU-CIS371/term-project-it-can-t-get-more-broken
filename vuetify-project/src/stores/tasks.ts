@@ -3,6 +3,14 @@ import { CollectionReference, DocumentReference, addDoc, setDoc, deleteDoc, doc,
 import { db } from "../firebase";
 import { id } from "vuetify/locale";
 
+interface User {
+    uid: string;
+    colorTheme: string;
+    darkMode: boolean;
+    completedTasks: number;
+    undeletedItems: Task[],
+}
+
 interface Task {
     tid: string;
     uid: string;
@@ -14,31 +22,82 @@ interface Task {
 interface tStore {
     colorTheme: string;
     darkMode: boolean;
-    completed: number;
+    completedTasks: number;
+    percentCompleted: number;
     items: Task[];
-    selectedTasks: [];
+    undeletedItems: Task[],
+    selectedTasks: string[];
 }
 
 export const useTaskStore = defineStore("TaskStore", {
 
     state: (): tStore => ({
       colorTheme: "#0091EA",
-      darkMode: false,
-      completed: 0,
+      darkMode: true,
+      completedTasks: 0,
+      percentCompleted: 100,
       items:  [],
+      undeletedItems: [],
       selectedTasks: []
     }),
 
     actions: {
+
+      // add user profile if new
+      async addNewUser(uid: string) {
+        const collectionName = 'users';
+        const CollectionReference = collection(db, collectionName);
+        const QS = await getDocs(CollectionReference);
+        let existingUser = false;
+
+        console.log(uid + " in function")
+
+        QS.forEach((doc) => {
+          const docData = doc.data();
+          if (docData.uid === uid) {
+            existingUser = true;
+          }
+        });
+          
+          if (!existingUser && uid != null) {
+            //set new defaults
+            const userObject = {
+              uid: uid ? uid : null,
+              colorTheme: "#0091EA",
+              darkMode: true,
+              completedTasks: 0,
+              undeletedItems: []
+            };
+
+            const userDocRef = await addDoc(collection( db, 'users'), userObject);
+            return userDocRef;
+          }
+      },
+
       // get current user tasks
-      async getUserTasks(uid) {
-        const collectionName = 'tasks';
+      async getUserTasks(uid, userDocID: string) {
+
+        //get user settings
+        const userDocRef = doc(db, 'users', userDocID);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+
+          this.colorTheme = userData.colorTheme;
+          this.darkMode = userData.darkMode;
+          this.completedTasks = userData.completedTasks;
+          this.undeletedItems = userData.undeletedItems;
+        }
+
+
+        let collectionName = 'tasks';
         const collectionRef = collection(db, collectionName);
-        const QS = await getDocs(collectionRef);
+        QS = await getDocs(collectionRef);
 
         QS.forEach((doc) => {
           if (uid.value == doc.data().uid) {
-            this.items.push({ id: doc.id, ...doc.data()})
+            this.items.push({ tid: doc.id, ...doc.data()})
+            this.undeletedItems.push({ tid: doc.id, ...doc.data()})
           }
         })
       },
@@ -51,15 +110,19 @@ export const useTaskStore = defineStore("TaskStore", {
             name: name,
             date: date ? Timestamp.fromDate(date) : null,
             description: description || null
-         }
-         const docRef = await addDoc(collection( db, 'tasks'), taskObject)
-         this.items.push({ tid: docRef.id, ...taskObject})
+         };
+         const docRef = await addDoc(collection( db, 'tasks'), taskObject);
+         this.items.push({ tid: docRef.id, ...taskObject});
+         this.undeletedItems.push({ tid: docRef.id, ...taskObject});
       },
 
       //add selected task to list
-      async addSelectedTask(id: string) {
-        if (!this.selectedTasks.includes(id)) {
-          this.selectedTasks.push(id);
+      async addSelectedTask(tid: string) {
+        if (!this.selectedTasks.includes(tid)) {
+          this.selectedTasks.push(tid);
+        }
+        else {
+          this.selectedTasks = this.selectedTasks.filter(docRef => docRef != tid);
         }
       },
 
@@ -68,16 +131,29 @@ export const useTaskStore = defineStore("TaskStore", {
         try {
           for (const docRef of this.selectedTasks) {
             await deleteDoc(doc(db, 'tasks', docRef));
-            this.items = this.items.filter(obj => obj['tid'] !== docRef);
+            this.items = this.items.filter(task => task.tid != docRef);
+            this.undeletedItems = this.undeletedItems.filter(task => task.tid != docRef);
           }
+          
           this.selectedTasks.length = 0;
         }
         catch (overallError){
           console.error(overallError);
         }
-    }
+      },
 
-      //calculate the percentage of tasks completed
+      //calculate number of tasks completed
+      async completeTasks(docRef) {
+        await deleteDoc(doc(db, 'tasks', docRef));
+        this.completedTasks++;
+        this.items = this.items.filter(task => task.tid != docRef);
+        this.calcPercentCompleted();
+      },
 
-    }
-  });
+      //calculate percentage of tasks completed
+      async calcPercentCompleted() {
+        if (this.undeletedItems.length > 0) {
+          this.percentCompleted = Math.ceil((this.completedTasks / this.undeletedItems.length) * 100);
+        }
+      }
+  }});

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main >
+    <v-main>
       <div v-if="!user">
         <h2 style="text-align: center;">Please sign in</h2>
         <div id="firebaseui-auth-container"></div>
@@ -62,7 +62,6 @@
         <!-- Navigation Bar -->
         <v-navigation-drawer
           v-model="taskDrawer"
-          temporary
           width = "400">
           <!-- Add Tasks Button -->
           <v-btn @click="addTaskDialogue = !addTaskDialogue" :color="taskStore.colorTheme" justify="center" style="margin-left: 25px; margin-top: 5%"  >
@@ -78,11 +77,12 @@
             style="margin-left: 5%; margin-top: 5%" 
             icon="mdi-delete" 
             size="small"
+            color="#C62828"
             @click="taskStore.deleteSelectedTasks()"></v-btn> 
           <v-list>
             <v-list-item
               v-for="item in taskStore.items"
-              :key="item.id"
+              :key="item.tid"
               :value="item"
               color="primary"
               @mouseover="isHovered = true"
@@ -93,40 +93,71 @@
                 <v-checkbox-btn
                   v-if="visibleCheckBox"
                   :key="item.tid"
-                  @click="taskStore.addSelectedTask(item.id)"
+                  @click="taskStore.addSelectedTask(item.tid)"
                 >
                 </v-checkbox-btn>
               </template>
               
                 <v-list-item-title v-text="item.name"></v-list-item-title>
               <template v-slot:append>
-                <v-btn icon="mdi-delete" size="small" v-if="isHovered"></v-btn>
+                <v-btn
+                  icon="mdi-check"
+                  size="small"
+                  v-if="isHovered"
+                  @click="taskStore.completeTasks(item.tid)"></v-btn>
               </template>
               
+              
+
               </v-list-item>
           </v-list>
         </v-navigation-drawer>
 
         <!-- Main Content Display Area -->
-        <v-main
-        class="d-flex justify-center"
-        v-model="taskStore.darkMode"
-        style="height: 100vh; width: auto;"
+        <v-container
+        style="height: 100vh; display: flex; justify-content: center; align-items: center;"
         :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF'}"
+        fluid
         >
+        <v-col>
+          <v-row>
+            <v-col style="background-color: white; display: flex; justify-content: center; align-items: center; margin: ">
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col style="display: flex; justify-content: center; align-items: center;">
+              <div>
+                <!-- Progress Chart -->
+                <v-progress-circular
+                  :color="taskStore.colorTheme"
+                  :size="512"
+                  :width="45"
+                  :rotate="360"
+                  style="font-size: 36px;"
+                  :model-value="taskStore.percentCompleted"
+                >
+                  <span>{{ taskStore.percentCompleted }}% Tasks Completed</span>
+                </v-progress-circular>
+              </div>
+            </v-col>
+              
+            <v-divider vertical></v-divider>
 
-          <!-- Progress Chart -->
-          <v-progress-circular
-            :color="taskStore.colorTheme"
-            :size="512"
-            :width="72"
-            :rotate="360"
-            style="font-size: 36px;"
-            model-value="totalProgress"
-          >
-            <span>{{ totalProgress }} Tasks Left</span>
-          </v-progress-circular>
-        </v-main>
+            <v-col style="display: flex; justify-content: center; align-items: center;">
+                <v-progress-circular
+                    :color="taskStore.colorTheme"
+                    :size="512"
+                    :width="45"
+                    :rotate="360"
+                    style="font-size: 36px;"
+                    :model-value="taskStore.percentCompleted"
+                  >
+                  <span>{{ taskStore.completedTasks }} Tasks Completed!</span>
+                </v-progress-circular>
+            </v-col>
+          </v-row>
+        </v-col>
+        </v-container>
 
         <!-- Add Task Button Dialogue Window -->
         <div>
@@ -199,6 +230,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useTaskStore, createUser } from "./stores/tasks";
 import { auth, uiConfig, firebaseui } from './firebase'; 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { stringify } from 'querystring';
 
 // authentication
 const taskStore = useTaskStore();
@@ -209,11 +241,13 @@ onMounted(() => {
   
   auth.onAuthStateChanged((u) => {
     user.value = u;
-    uid.value = u?.uid || null;
     if (u) {
       // If a user exists
       const authInstance = getAuth();
       const email = u.email;
+      uid.value = u?.uid || null;
+      const userDocID = taskStore.addNewUser(uid.value)
+      taskStore.getUserTasks(uid, userDocID);
       
     } else {
       // User is not logged in, start Firebase UI
@@ -223,8 +257,8 @@ onMounted(() => {
     }
   });
 
-  taskStore.getUserTasks(uid);
-
+  //check userid and get any existing tasks
+  
 });
 
 
@@ -249,10 +283,6 @@ const colorThemes = [
   {name: "Green", vid: "#64DD17"}
 ]
 
-const totalProgress = computed(() => {
-  return taskStore.items.length
-})
-
 const handleSubmit = async() => {
   if (taskName.value.length >= 1 && uid.value) {
     await taskStore.addTask( uid.value, taskName.value, endDate.value, taskDescription.value)
@@ -275,9 +305,9 @@ const nameRules = [
   }
 ];
 
-function newColorTheme(newColor) {
-  taskStore.colorTheme = newColor;
-};
+function newColorTheme(vid) {
+  taskStore.colorTheme = vid
+}
 
 function signOut() {
   auth.signOut();
