@@ -56,7 +56,10 @@ export const useTaskStore = defineStore("TaskStore", {
           const docData = doc.data();
           if (docData.uid === uid) {
             existingUser = true;
-            
+            this.colorTheme = docData.colorTheme;
+            this.darkMode = docData.darkMode;
+            this.completedTasks = docData.completedTasks;
+            this.undeletedItems = docData.undeletedItems;
           }
         });
           
@@ -78,7 +81,7 @@ export const useTaskStore = defineStore("TaskStore", {
       // get current user tasks
       async getUserTasks(uid, userDocID: string) {
 
-        //get user settings
+        // get user settings
         const userDocRef = doc(db, 'users', userDocID);
         const userDocSnap = await getDoc(userDocRef);
         if (userDocSnap.exists()) {
@@ -93,7 +96,7 @@ export const useTaskStore = defineStore("TaskStore", {
 
         let collectionName = 'tasks';
         const collectionRef = collection(db, collectionName);
-        QS = await getDocs(collectionRef);
+        const QS = await getDocs(collectionRef);
 
         QS.forEach((doc) => {
           if (uid.value == doc.data().uid) {
@@ -117,7 +120,7 @@ export const useTaskStore = defineStore("TaskStore", {
          this.undeletedItems.push({ tid: docRef.id, ...taskObject});
       },
 
-      //add selected task to list
+      // add selected task to list
       async addSelectedTask(tid: string) {
         if (!this.selectedTasks.includes(tid)) {
           this.selectedTasks.push(tid);
@@ -143,7 +146,7 @@ export const useTaskStore = defineStore("TaskStore", {
         }
       },
 
-      //calculate number of tasks completed
+      // calculate number of tasks completed
       async completeTasks(docRef) {
         await deleteDoc(doc(db, 'tasks', docRef));
         this.completedTasks++;
@@ -151,10 +154,30 @@ export const useTaskStore = defineStore("TaskStore", {
         this.calcPercentCompleted();
       },
 
-      //calculate percentage of tasks completed
+      // calculate percentage of tasks completed
       async calcPercentCompleted() {
         if (this.undeletedItems.length > 0) {
           this.percentCompleted = Math.ceil((this.completedTasks / this.undeletedItems.length) * 100);
         }
+      },
+
+      // update visual preferences
+      async updatePref(uid: string) {
+        const collectionName = 'users';
+        const CollectionReference = collection(db, collectionName);
+        const QS = await getDocs(CollectionReference);
+
+        QS.forEach((docQ) => {
+          const docData = docQ.data();
+          if (docData.uid === uid) {
+            setDoc(doc(db, "users", uid), {
+              colorTheme: this.colorTheme,
+              completedTasks: docData.completedTasks,
+              darkMode: this.darkMode,
+              uid: docData.uid,
+              undeletedItems: docData.undeletedItems
+            })
+          }
+        });
       }
   }});

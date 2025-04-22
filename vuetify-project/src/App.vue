@@ -17,6 +17,7 @@
             :color="taskStore.darkMode ? 'black' : 'white'"
             :label-color="taskStore.darkMode ? 'white' : 'black'"
             style="margin-top: 20px; margin-right:20px;">
+            @click="taskStore.updatePref(taskStore.uid)"
           </v-switch>
 
           <!-- Settings Button -->
@@ -307,6 +308,7 @@ const nameRules = [
 
 function newColorTheme(vid) {
   taskStore.colorTheme = vid
+  taskStore.updatePref(uid.value)
 }
 
 function signOut() {
