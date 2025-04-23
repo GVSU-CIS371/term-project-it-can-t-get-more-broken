@@ -247,7 +247,7 @@ onMounted(() => {
       // If a user exists
       const authInstance = getAuth();
       const email = u.email;
-      uid.value = u?.uid;
+      uid.value = u?.uid || null;
       const userDocID = taskStore.addNewUser(uid.value)
       taskStore.getUserTasks(uid, userDocID);
       
