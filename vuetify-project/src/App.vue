@@ -122,8 +122,7 @@
         >
         <v-col>
           <v-row>
-            <v-col style="display: flex; justify-content: center; align-items: center; margin: "
-            :style="{backgroundColor: taskStore.darkMode ? '#424242' : '#FFFFFF'}">
+            <v-col style="background-color: white; display: flex; justify-content: center; align-items: center; margin: ">
             </v-col>
           </v-row>
           <v-row>
