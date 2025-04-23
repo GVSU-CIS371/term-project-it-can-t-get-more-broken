@@ -229,15 +229,14 @@
 <script lang="ts" setup>
 // imports
 import { ref, computed, onMounted } from 'vue';
-import { useTaskStore, createUser } from "./stores/tasks";
+import { useTaskStore } from "./stores/tasks";
 import { auth, uiConfig, firebaseui } from './firebase'; 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { stringify } from 'querystring';
 
 // authentication
 const taskStore = useTaskStore();
 const user = ref(auth.currentUser);
-const uid = ref<string | null>(user.value?.uid || null);
+let uid = ref< string >('');
 
 onMounted(() => {
   
@@ -247,15 +246,15 @@ onMounted(() => {
       // If a user exists
       const authInstance = getAuth();
       const email = u.email;
-      uid.value = u?.uid || null;
+      uid.value = u.uid;
       const userDocID = taskStore.addNewUser(uid.value)
-      taskStore.getUserTasks(uid, userDocID);
+      taskStore.getUserTasks(uid.value);
       
     } else {
       // User is not logged in, start Firebase UI
       const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
       ui.start('#firebaseui-auth-container', uiConfig);
-      uid.value = null;
+      uid.value = '';
     }
   });
 
@@ -273,7 +272,7 @@ const isHovered = ref(false);
 
 //v-model values
 const taskName = ref<string >('');
-const endDate = ref< Date | null >(null);
+const endDate = ref< Date >(new Date());
 const taskDescription = ref<string>('');
 
 const colorThemes = [ 
@@ -289,7 +288,7 @@ const handleSubmit = async() => {
   if (taskName.value.length >= 1 && uid.value) {
     await taskStore.addTask( uid.value, taskName.value, endDate.value, taskDescription.value)
     taskName.value = '';
-    endDate.value = null;
+    endDate.value = new Date();
     taskDescription.value = '';
   } else {
     console.log("User not signed in. Cannot add tasks")
@@ -307,7 +306,7 @@ const nameRules = [
   }
 ];
 
-function newColorTheme(vid) {
+function newColorTheme(vid: string) {
   taskStore.colorTheme = vid
   taskStore.updatePref(uid.value)
 }

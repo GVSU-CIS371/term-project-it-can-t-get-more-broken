@@ -79,29 +79,26 @@ export const useTaskStore = defineStore("TaskStore", {
       },
 
       // get current user tasks
-      async getUserTasks(uid, userDocID: string) {
-
-        // get user settings
-        const userDocRef = doc(db, 'users', userDocID);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-
-          this.colorTheme = userData.colorTheme;
-          this.darkMode = userData.darkMode;
-          this.completedTasks = userData.completedTasks;
-          this.undeletedItems = userData.undeletedItems;
-        }
-
-
+      async getUserTasks(uid: string) {
         let collectionName = 'tasks';
         const collectionRef = collection(db, collectionName);
         const QS = await getDocs(collectionRef);
 
         QS.forEach((doc) => {
-          if (uid.value == doc.data().uid) {
-            this.items.push({ tid: doc.id, ...doc.data()})
-            this.undeletedItems.push({ tid: doc.id, ...doc.data()})
+          let docData = doc.data();
+          if (uid == doc.data().uid) {
+            this.items.push({ 
+              tid: doc.id,
+              uid: docData.uid,
+              name: docData.name,
+              description: docData.description,
+              date: docData.date})
+            this.undeletedItems.push({ 
+              tid: doc.id,
+              uid: docData.uid,
+              name: docData.name,
+              description: docData.description,
+              date: docData.date})
           }
         })
       },
@@ -110,13 +107,13 @@ export const useTaskStore = defineStore("TaskStore", {
       async addTask(uid: string, name: string, date: Date, description: string) {
 
          const taskObject = {
-            uid: uid ? uid : null,
+            uid: uid,
             name: name,
-            date: date ? Timestamp.fromDate(date) : null,
-            description: description || null
+            date: date,
+            description: description || ''
          };
          const docRef = await addDoc(collection( db, 'tasks'), taskObject);
-         this.items.push({ tid: docRef.id, ...taskObject});
+         this.items.push({ tid: docRef.id, ...taskObject });
          this.undeletedItems.push({ tid: docRef.id, ...taskObject});
       },
 
@@ -147,10 +144,10 @@ export const useTaskStore = defineStore("TaskStore", {
       },
 
       // calculate number of tasks completed
-      async completeTasks(docRef) {
-        await deleteDoc(doc(db, 'tasks', docRef));
+      async completeTasks(tid: string) {
+        await deleteDoc(doc(db, 'tasks', tid));
         this.completedTasks++;
-        this.items = this.items.filter(task => task.tid != docRef);
+        this.items = this.items.filter(task => task.tid != tid);
         this.calcPercentCompleted();
       },
 
