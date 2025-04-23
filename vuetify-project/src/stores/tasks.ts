@@ -79,29 +79,26 @@ export const useTaskStore = defineStore("TaskStore", {
       },
 
       // get current user tasks
-      async getUserTasks(uid, userDocID: string) {
-
-        // get user settings
-        const userDocRef = doc(db, 'users', userDocID);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-
-          this.colorTheme = userData.colorTheme;
-          this.darkMode = userData.darkMode;
-          this.completedTasks = userData.completedTasks;
-          this.undeletedItems = userData.undeletedItems;
-        }
-
-
+      async getUserTasks(uid: string) {
         let collectionName = 'tasks';
         const collectionRef = collection(db, collectionName);
         const QS = await getDocs(collectionRef);
 
         QS.forEach((doc) => {
-          if (uid.value == doc.data().uid) {
-            this.items.push({ tid: doc.id, ...doc.data()})
-            this.undeletedItems.push({ tid: doc.id, ...doc.data()})
+          let docData = doc.data()
+          console.log(uid)
+          console.log(docData.uid)
+          if (uid.value == docData.uid) {
+            this.items.push({ tid: docData.tid,
+              uid: docData.uid,
+              name: docData.name,
+              description: docData.description,
+              date: docData.date })
+            this.undeletedItems.push({ tid: docData.tid,
+              uid: docData.uid,
+              name: docData.name,
+              description: docData.description,
+              date: docData.date})
           }
         })
       },
@@ -116,8 +113,17 @@ export const useTaskStore = defineStore("TaskStore", {
             description: description || null
          };
          const docRef = await addDoc(collection( db, 'tasks'), taskObject);
-         this.items.push({ tid: docRef.id, ...taskObject});
-         this.undeletedItems.push({ tid: docRef.id, ...taskObject});
+         this.items.push({ tid: docRef.id, 
+              uid: uid,
+              name: taskObject.name,
+              description: description,
+              date: date
+         });
+         this.undeletedItems.push({ tid: docRef.id, 
+          uid: uid,
+          name: taskObject.name,
+          description: description,
+          date: date});
       },
 
       // add selected task to list
