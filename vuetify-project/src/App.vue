@@ -296,7 +296,7 @@ const handleSubmit = async() => {
 }
 
 const nameRules = [
-  value => {
+  (value: string) => {
     if (value?.length < 1) {
       return 'Task must have a name'
     }
